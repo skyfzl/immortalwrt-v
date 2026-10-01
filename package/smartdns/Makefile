@@ -15,6 +15,7 @@ PKG_MIRROR_HASH:=skip
 PKG_SOURCE_VERSION:=2b2b31f1e5acf6cbb975f17c600ccc6bffd03cdf
 
 SMARTDNS_WEBUI_VERSION:=1.0.0
+SMARTDNS_WEBUI_HASH:=skip
 SMARTDNS_WEBUI_SOURCE_PROTO:=git
 SMARTDNS_WEBUI_SOURCE_URL:=https://github.com/pymumu/smartdns-webui.git
 SMARTDNS_WEBUI_SOURCE_VERSION:=c0d2411d20bf8b172a045adbe07166df6691e58b
@@ -105,11 +106,12 @@ endef
 
 define Build/Compile/smartdns-ui
 	cargo install --force --locked bindgen-cli
-	CARGO_BUILD_ARGS="$(if $(strip $(RUST_PKG_FEATURES)),--features "$(strip $(RUST_PKG_FEATURES))") --profile $(CARGO_PKG_PROFILE)"
-	+$(CARGO_PKG_VARS) CARGO_BUILD_ARGS="$(CARGO_BUILD_ARGS)" CC=$(TARGET_CC) \
-	PATH="$$(PATH):$(CARGO_HOME)/bin" \
-	AWS_LC_SYS_CFLAGS="-O0" \
-	make -C $(PKG_BUILD_DIR)/plugin/smartdns-ui
+	+$(CARGO_PKG_VARS) \
+		CARGO_BUILD_ARGS="$(if $(strip $(RUST_PKG_FEATURES)),--features $(strip $(RUST_PKG_FEATURES)) )--profile $(CARGO_PKG_PROFILE)" \
+		CC="$(TARGET_CC)" \
+		PATH="$$(PATH):$(CARGO_HOME)/bin" \
+		AWS_LC_SYS_CFLAGS="-O0" \
+		$(MAKE) -C $(PKG_BUILD_DIR)/plugin/smartdns-ui
 endef
 
 define Download/smartdns-webui
